@@ -24,15 +24,15 @@ export default function RenderInfo({ id, timeStart, frameStart, frameEnd, curren
         type IconMap = { [K in RenderState]: any }
 
         const colorMap: IconMap = {
-            finished: "green-400",
-            canceled: "red-400",
-            inProgress: "blue-400",
-            started: "green-400",
+            finished: "bg-green-900",
+            canceled: "bg-red-900",
+            inProgress: "bg-blue-900",
+            started: "bg-blue-900",
         };
 
         return (
             <div className="flex flex-row gap-2 items-center">
-                <Badge className={`bg-${colorMap[state]}`}>{state.charAt(0).toUpperCase() + state.slice(1)}</Badge>
+                <Badge className={colorMap[state]} variant="outline">{state.charAt(0).toUpperCase() + state.slice(1)}</Badge>
             </div>
         );
     }
@@ -56,7 +56,7 @@ export default function RenderInfo({ id, timeStart, frameStart, frameEnd, curren
                     <div className="my-3">
                         <Progress
                             value={currentFrame ?? frameEnd}
-                            color={finished ? (canceled ? 'red-400': 'green-400') : 'blue-400'} />
+                            color={finished ? (canceled ? 'red-900': 'green-900') : 'blue-400'} />
                     </div>
 
                     <span>{project}</span>

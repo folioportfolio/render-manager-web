@@ -1,4 +1,5 @@
-import {Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu,
+import {Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
+    SidebarHeader, SidebarMenu,
     SidebarMenuButton, SidebarMenuItem} from "@/ui/Sidebar.tsx";
 import {useNavigate} from "react-router";
 import { HomeIcon, SettingsIcon } from "lucide-react"
@@ -7,6 +8,7 @@ import {Button} from "@/ui/Button.tsx";
 import ServerSettingsView from "@/views/ServerSettingsView.tsx";
 import {useServerStore} from "@/core/store/serverStore.ts";
 import {useState} from "react";
+import logo from "@/assets/logo.svg";
 
 export default function MainMenu() {
     const navigate = useNavigate();
@@ -24,6 +26,9 @@ export default function MainMenu() {
     return (
         <>
             <Sidebar>
+                <SidebarHeader>
+                    <img className="my-2 h-10 self-start" src={logo} alt="Render Status Logo" />
+                </SidebarHeader>
                 <SidebarContent>
                     <SidebarGroup>
                         <SidebarGroupLabel>Application</SidebarGroupLabel>

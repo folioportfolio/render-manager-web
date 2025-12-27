@@ -1,20 +1,10 @@
-import {
-    Text,
-    StyleSheet,
-    ScrollView,
-    View,
-    BlurEvent,
-    TextInputEndEditingEvent,
-} from "react-native";
-import { SettingsInput, SettingsKeys } from "../../types/settings";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Card from "../controls/Card";
-import TextInput from "../controls/TextInput";
-import { getUserData, setUserData } from "../../hooks/userSettings";
-import { useEffect, useState } from "react";
-import Button from "../controls/Button";
-import { theme } from "../../themes/themes";
-import { useServerStore } from "../store/serverStore";
+import {useEffect, useState} from "react";
+import type {SettingsInput, SettingsKeys} from "@/core/types/settings.ts";
+import {useServerStore} from "@/core/store/serverStore.ts";
+import {getUserData, setUserData} from "@/core/hooks/userSettings.ts";
+import {Card, CardContent, CardFooter, CardHeader} from "@/ui/Card.tsx";
+import {Input} from "@/ui/Input.tsx";
+import {Button} from "@/ui/Button.tsx";
 
 export default function SettingsView() {
     const [defaultSettings, setDefaultSettings] = useState<Map<SettingsKeys, string>>(() => new Map());
@@ -23,7 +13,7 @@ export default function SettingsView() {
     const setHostname = useServerStore((s) => s.setHostname);
 
     const settingsInputs : Map<SettingsKeys, SettingsInput> = new Map([
-        ["hostname", { key: "hostname", label: "Hostname", type: "text", default: process.env.EXPO_PUBLIC_API_HOST, process: (s: string) => {setHostname(s); return s} }],
+        ["hostname", { key: "hostname", label: "Hostname", type: "text", default: import.meta.env.VITE_API_HOST, process: (s: string) => {setHostname(s); return s} }],
     ]);
 
     const saveSettings = () => {
@@ -74,68 +64,40 @@ export default function SettingsView() {
 
     return (
         <>
-            <View style={{ flex: 1 }}>
-                <SafeAreaView style={{ flex: 1 }}>
-                    <ScrollView>
-                        <Card style={styles.settingsCard}>
-                            {Array.from(defaultSettings.keys()).map((s) => {
-                                const setting = settingsInputs.get(s);
-                                return (
-                                    <View key={s}>
-                                        <TextInput
-                                            style={styles.textInput}
-                                            label={setting?.label}
-                                            value={settings.get(s)}
-                                            onChangeText={(text) =>
-                                                setSettings(prev => {
-                                                    const next = new Map(prev);
-                                                    next.set(s, text);
-                                                    return next;
-                                                })
-                                            }
-                                        />
-                                    </View>
-                                );
-                            })}
-
-                            <View style={styles.buttonPanel}>
-                                <Button style={styles.button} onPress={saveSettings}>
-                                    <Text>Apply</Text>
-                                </Button>
-                                <Button onPress={resetSettings} style={[styles.button, {backgroundColor: theme.background}]}>
-                                    <Text style={{color: theme.color}}>Cancel</Text>
-                                </Button>
-                            </View>
-                        </Card>
-                    </ScrollView>
-                </SafeAreaView>
-            </View>
+            <div className="flex flex-col gap-1 w-full">
+                <Card>
+                    <CardHeader>
+                        Server Settings
+                    </CardHeader>
+                    <CardContent>
+                        {Array.from(defaultSettings.keys()).map((s) => {
+                            return (
+                                <div key={s}>
+                                    <Input value={settings.get(s)}
+                                           onChange={(e) =>
+                                               setSettings(prev => {
+                                                   const next = new Map(prev);
+                                                   next.set(s, e.target.textContent);
+                                                   return next;
+                                               })
+                                           }
+                                    />
+                                </div>
+                            );
+                        })}
+                    </CardContent>
+                    <CardFooter>
+                        <div className="flex flex-row gap-2">
+                            <Button variant="default" onClick={saveSettings}>
+                                Apply
+                            </Button>
+                            <Button variant="secondary" onClick={resetSettings}>
+                                Cancel
+                            </Button>
+                        </div>
+                    </CardFooter>
+                </Card>
+            </div>
         </>
     );
 }
-
-const styles = StyleSheet.create({
-    settingsCard: {
-        marginLeft: 10,
-        marginRight: 15,
-        marginTop: 20,
-        marginBottom: 10,
-        paddingTop: 10,
-        paddingBottom: 30,
-        paddingHorizontal: 10,
-    },
-    settingsLabel: {
-        fontSize: 20,
-        fontWeight: 600,
-    },
-    textInput: {
-        marginVertical: 10,
-    },
-    buttonPanel: {
-        flexDirection: "row",
-        justifyContent: "flex-end",
-    },
-    button: {
-        marginRight: 0
-    }
-});

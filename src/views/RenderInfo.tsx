@@ -1,8 +1,10 @@
 import { format } from "date-fns";
-import { theme } from "../core/themes/themes";
 import { type RenderState } from "../core/types/types";
 import {Progress} from "@/ui/Progress.tsx";
-import {Card} from "@/ui/Card.tsx";
+import {Card, CardContent, CardFooter, CardHeader} from "@/ui/Card.tsx";
+import checkIcon from "@/assets/simple-check.png";
+import errorIcon from "@/assets/simple-error.png";
+import timeIcon from "@/assets/simple-time.png";
 
 export interface RenderInfoProps {
     id: string;
@@ -24,15 +26,15 @@ export default function RenderInfo({ id, timeStart, frameStart, frameEnd, curren
         type IconMap = { [K in RenderState]: any }
 
         const iconMap: IconMap = {
-            finished: "../assets/simple-check.png",
-            canceled: "../assets/simple-error.png",
-            inProgress: "../assets/simple-time.png",
-            started: "../assets/simple-time.png",
+            finished: checkIcon,
+            canceled: errorIcon,
+            inProgress: timeIcon,
+            started: timeIcon,
         };
 
         return (
-            <div>
-                <img alt="Render State Icon" src={iconMap[state]} />
+            <div className="flex flex-row gap-2 items-center">
+                <img className="w-5 h-5" alt="Render State Icon" src={iconMap[state]} />
                 <span>{state.charAt(0).toUpperCase() + state.slice(1)}</span>
             </div>
         );
@@ -40,21 +42,29 @@ export default function RenderInfo({ id, timeStart, frameStart, frameEnd, curren
 
     return (
         <>
-            <Card>
-                <span>Render {project.substring(project.lastIndexOf("\\") + 1)}</span>
-                <span>Total frames: {frameEnd - frameStart + 1}</span>
-                <span>Start time: {format(new Date(timeStart * 1000), "dd.MM.yyyy HH:mm:ss")}</span>
-                <span>Current frame: {currentFrame ?? '-'}</span>
+            <Card className="flex gap-1">
+                <CardHeader>
+                    <span>Render {project.substring(project.lastIndexOf("\\") + 1)}</span>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex flex-col gap-1">
+                        <span className="text-sm">Total frames: {frameEnd - frameStart + 1}</span>
+                        <span className="text-sm">Start time: {format(new Date(timeStart * 1000), "dd.MM.yyyy HH:mm:ss")}</span>
+                        <span className="text-sm">Current frame: {currentFrame ?? '-'}</span>
+                    </div>
 
-                <div>
-                    {getRenderState(state)}
-                    <Progress
-                        value={currentFrame ?? frameEnd}
-                        color={finished ? (canceled ? theme.canceled : theme.done) : theme.inProgress} />
-                </div>
+                    <div className="my-3">
+                        {getRenderState(state)}
+                        <Progress
+                            value={currentFrame ?? frameEnd}
+                            color={finished ? (canceled ? '#ff0000': '#00ff00') : '#0000ff'} />
+                    </div>
 
-                <span>{project}</span>
-                <span>{id}</span>
+                    <span>{project}</span>
+                </CardContent>
+                <CardFooter>
+                    <span className="text-xs text-muted-foreground">{id}</span>
+                </CardFooter>
             </Card>
         </>
     );

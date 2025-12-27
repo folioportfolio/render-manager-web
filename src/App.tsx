@@ -2,7 +2,13 @@ import { useEffect } from 'react';
 import { RenderProvider } from './core/contexts/renderContext';
 import { getUserData } from './core/hooks/userSettings';
 import { useServerStore } from './core/store/serverStore';
-import MainWindow from './views/MainWindow';
+import MainMenu from './views/MainMenu.tsx';
+import {ThemeProvider} from "@/ui/providers/theme-provider.tsx";
+import {SidebarProvider, SidebarTrigger} from "@/ui/Sidebar.tsx";
+import {BrowserRouter, Route, Routes} from "react-router";
+import RenderBrowserView from "@/views/RenderBrowserView.tsx";
+import SettingsView from "@/views/SettingsView.tsx";
+
 
 export default function App() {
     const setHostname = useServerStore((s) => s.setHostname);
@@ -16,9 +22,19 @@ export default function App() {
 
     return (
         <RenderProvider>
-            <div>
-                <MainWindow />
-            </div>
+            <SidebarProvider>
+                <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+                    <BrowserRouter>
+                        <SidebarTrigger />
+                        <MainMenu />
+
+                        <Routes>
+                            <Route index element={<RenderBrowserView />} />
+                            <Route path="settings" element={<SettingsView />} />
+                        </Routes>
+                    </BrowserRouter>
+                </ThemeProvider>
+            </SidebarProvider>
         </RenderProvider>
     );
 }

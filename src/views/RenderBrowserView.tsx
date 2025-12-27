@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import { useRenderJobs } from "../core/contexts/renderContext";
 import { type RenderJob } from "../core/types/types";
 import RenderInfo from "@/views/RenderInfo.tsx";
+import {Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink,
+    PaginationNext, PaginationPrevious} from "@/ui/Pagination.tsx";
 
 export default function RenderBrowserView() {
     const renderContext = useRenderJobs();
@@ -38,28 +40,56 @@ export default function RenderBrowserView() {
 
     return (
         <>
-            <div className="w-full pr-6">
-                {items.filter(x => x.data.length > 0).map((section) => (
-                    <div key={section.title}>
-                        <h1 className="my-4 text-4xl">{section.title}</h1>
+            <div className="flex flex-col w-full">
+                <div className="flex-1 pr-6">
+                    {items.filter(x => x.data.length > 0).map((section) => (
+                        <div key={section.title}>
+                            <h1 className="my-4 text-4xl">{section.title}</h1>
 
-                        <div className="grid grid-cols-4 gap-4">
-                            {section.data.map((item) => (
-                                <RenderInfo key={item.id}
-                                            id={item.id}
-                                            finished={doneStates.includes(item.state)}
-                                            canceled={item.state === "canceled"}
-                                            state={item.state}
-                                            currentFrame={item.currentFrame}
-                                            frameEnd={item.frameEnd}
-                                            frameStart={item.frameStart}
-                                            timeStart={item.timeStart}
-                                            timeEnd={item.timeLastFrame}
-                                            project={item.project} />
-                            ))}
+                            <div className="grid md:grid-cols-4 sm:grid-cols-1 gap-4">
+                                {section.data.map((item) => (
+                                    <RenderInfo key={item.id}
+                                                id={item.id}
+                                                finished={doneStates.includes(item.state)}
+                                                canceled={item.state === "canceled"}
+                                                state={item.state}
+                                                currentFrame={item.currentFrame}
+                                                frameEnd={item.frameEnd}
+                                                frameStart={item.frameStart}
+                                                timeStart={item.timeStart}
+                                                timeEnd={item.timeLastFrame}
+                                                project={item.project} />
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
+
+                <Pagination className="my-3">
+                    <PaginationContent>
+                        <PaginationItem>
+                            <PaginationPrevious href="#" />
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#">1</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#">2</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#">3</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationEllipsis />
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#">10</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationNext href="#" />
+                        </PaginationItem>
+                    </PaginationContent>
+                </Pagination>
             </div>
         </>
     );

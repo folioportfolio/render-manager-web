@@ -4,7 +4,7 @@ import { useServerStore } from "../store/serverStore";
 import { useCallback, useEffect, useRef } from "react";
 
 const API_GET = "api/render";
-const DEFAULT_COUNT = 10;
+const DEFAULT_COUNT = 12;
 const LOAD_COUNT = 5;
 
 export const useFetcher = () => {

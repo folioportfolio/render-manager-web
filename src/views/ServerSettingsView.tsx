@@ -2,11 +2,16 @@ import {useEffect, useState} from "react";
 import type {SettingsInput, SettingsKeys} from "@/core/types/settings.ts";
 import {useServerStore} from "@/core/store/serverStore.ts";
 import {getUserData, setUserData} from "@/core/hooks/userSettings.ts";
-import {Card, CardContent, CardFooter, CardHeader} from "@/ui/Card.tsx";
 import {Input} from "@/ui/Input.tsx";
 import {Button} from "@/ui/Button.tsx";
+import { CheckIcon, XIcon } from "lucide-react";
 
-export default function SettingsView() {
+export interface ServerSettingsProps {
+    onSaved?: () => void;
+    onCancel?: () => void;
+}
+
+export default function ServerSettingsView({onSaved, onCancel}: ServerSettingsProps) {
     const [defaultSettings, setDefaultSettings] = useState<Map<SettingsKeys, string>>(() => new Map());
     const [settings, setSettings] = useState<Map<SettingsKeys, string>>(() => new Map());
     
@@ -34,11 +39,13 @@ export default function SettingsView() {
         }
 
         setDefaultSettings(settings);
+        onSaved?.();
     }
 
     const resetSettings = () => {
         setSettings(defaultSettings);
         setDefaultSettings(new Map(defaultSettings));
+        onCancel?.();
     }
 
     const loadSettings = async () => {
@@ -57,46 +64,38 @@ export default function SettingsView() {
         return await getUserData(key) ?? defaultValue;
     }
 
-
     useEffect(() => {
         loadSettings();
     }, []);
 
     return (
         <>
-            <div className="flex flex-col gap-1 w-full">
-                <Card>
-                    <CardHeader>
-                        Server Settings
-                    </CardHeader>
-                    <CardContent>
-                        {Array.from(defaultSettings.keys()).map((s) => {
-                            return (
-                                <div key={s}>
-                                    <Input value={settings.get(s)}
-                                           onChange={(e) =>
-                                               setSettings(prev => {
-                                                   const next = new Map(prev);
-                                                   next.set(s, e.target.textContent);
-                                                   return next;
-                                               })
-                                           }
-                                    />
-                                </div>
-                            );
-                        })}
-                    </CardContent>
-                    <CardFooter>
-                        <div className="flex flex-row gap-2">
-                            <Button variant="default" onClick={saveSettings}>
-                                Apply
-                            </Button>
-                            <Button variant="secondary" onClick={resetSettings}>
-                                Cancel
-                            </Button>
+            <div className="flex flex-col w-full py-4">
+                {Array.from(defaultSettings.keys()).map((s) => {
+                    return (
+                        <div key={s}>
+                            <span className="text-sm">{settingsInputs.get(s)?.label}</span>
+                            <Input value={settings.get(s)}
+                                   onChange={(e) =>
+                                       setSettings(prev => {
+                                           const next = new Map(prev);
+                                           next.set(s, e.target.textContent);
+                                           return next;
+                                       })
+                                   }
+                            />
                         </div>
-                    </CardFooter>
-                </Card>
+                    );
+                })}
+
+                <div className="flex flex-row gap-1 justify-end mt-4">
+                    <Button variant="default" size="icon" onClick={saveSettings}>
+                        <CheckIcon />
+                    </Button>
+                    <Button variant="secondary" size="icon" onClick={resetSettings}>
+                        <XIcon />
+                    </Button>
+                </div>
             </div>
         </>
     );

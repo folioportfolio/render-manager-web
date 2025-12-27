@@ -26,11 +26,25 @@ export default function RenderBrowserView() {
     const items = [
         {
             title: "In Progress",
-            data: inProgressJobs
+            data: inProgressJobs.concat([{
+                id: "aaaaa-aaaaa-aaaa-aaaaaa-aaa",
+                currentFrame: 5,
+                frameStart:  1,
+                frameEnd:  10,
+                state:  "inProgress",
+                project:  "project.blend",
+                timeStart:  451521541,
+                engine:  "CYCLES",
+                frameStep:  1,
+                resolutionX:  1920,
+                resolutionY:  1080
+            }]),
+            display: "grid md:grid-cols-2 sm:grid-cols-1 gap-4"
         },
         {
             title: "Finished",
-            data: finishedJobs
+            data: finishedJobs,
+            display: "grid md:grid-cols-4 sm:grid-cols-1 gap-4"
         }
     ];
 
@@ -46,7 +60,7 @@ export default function RenderBrowserView() {
                         <div key={section.title}>
                             <h1 className="my-4 text-4xl">{section.title}</h1>
 
-                            <div className="grid md:grid-cols-4 sm:grid-cols-1 gap-4">
+                            <div className={section.display}>
                                 {section.data.map((item) => (
                                     <RenderInfo key={item.id}
                                                 id={item.id}

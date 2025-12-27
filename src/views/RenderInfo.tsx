@@ -26,7 +26,7 @@ export default function RenderInfo({ id, timeStart, frameStart, frameEnd, curren
         const colorMap: IconMap = {
             finished: "bg-green-900",
             canceled: "bg-red-900",
-            inProgress: "bg-blue-900",
+            inProgress: "bg-blue-400",
             started: "bg-blue-900",
         };
 
@@ -55,14 +55,16 @@ export default function RenderInfo({ id, timeStart, frameStart, frameEnd, curren
 
                     <div className="my-3">
                         <Progress
-                            value={currentFrame ?? frameEnd}
+                            value={currentFrame ? currentFrame / (frameEnd - frameStart) * 100 : 100}
                             color={finished ? (canceled ? 'red-900': 'green-900') : 'blue-400'} />
                     </div>
 
-                    <span>{project}</span>
                 </CardContent>
                 <CardFooter>
-                    <span className="text-xs text-muted-foreground">{id}</span>
+                    <div className="flex flex-col">
+                        <span className="text-xs text-muted-foreground">{project}</span>
+                        <span className="text-xs text-muted-foreground">{id}</span>
+                    </div>
                 </CardFooter>
             </Card>
         </>

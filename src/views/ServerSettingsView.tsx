@@ -79,7 +79,7 @@ export default function ServerSettingsView({onSaved, onCancel}: ServerSettingsPr
                                    onChange={(e) =>
                                        setSettings(prev => {
                                            const next = new Map(prev);
-                                           next.set(s, e.target.textContent);
+                                           next.set(s, e.target.value);
                                            return next;
                                        })
                                    }

@@ -13,7 +13,9 @@ interface RenderContextValue {
     jobs: Map<string, RenderJob>;
     setJobs: React.Dispatch<React.SetStateAction<Map<string, RenderJob>>>;
     refresh: () => Promise<void>;
-    loadMoreJobs: () => Promise<void>;
+    currentPage: number;
+    setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+    maxPages: number;
 }
 
 interface RenderProviderProps {
@@ -24,22 +26,24 @@ export const RenderContext = createContext<RenderContextValue | null>(null);
 
 export const RenderProvider = ({ children }: RenderProviderProps) => {
     const [jobs, setJobs] = useState<Map<string, RenderJob>>(new Map());
-    const [cursor, setCursor] = useState<string | null>(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [maxPages, setMaxPages] = useState(1);
     const hostname = useServerStore((s) => s.hostname);
-    const { getRenderJobs, getMoreRenderJobs, getSocket } = useFetcher();
+    const { getRenderJobs, getSocket } = useFetcher();
 
-    const initJobs = async () => {
+    const loadJobs = async () => {
         try {
             const map = new Map<string, RenderJob>();
-            const jobs = await getRenderJobs();
+            const jobs = await getRenderJobs(currentPage);
 
             if (jobs) {
-                jobs.forEach((element) => {
+                jobs.items?.forEach((element) => {
                     map.set(element.id, element);
                 });
+
+                setMaxPages(Math.ceil(jobs.totalCount / import.meta.env.VITE_DEFAULT_COUNT));
             }
 
-            setCursor(jobs?.at(-1)?.id ?? null);
             setJobs(map);
         } catch (error) {
             console.log(error);
@@ -48,27 +52,7 @@ export const RenderProvider = ({ children }: RenderProviderProps) => {
     };
 
     const refresh = async () => {
-        await initJobs();
-    };
-
-    const loadMoreJobs = async () => {
-        if (!cursor) return;
-
-        const nextJobs = await getMoreRenderJobs(cursor);
-
-        if (!nextJobs) return;
-
-        setJobs((prev) => {
-            const next = new Map(prev);
-            for (const job of nextJobs) {
-                next.set(job.id, job);
-            }
-
-            console.log(`Loaded more: ${nextJobs.length}`);
-            return next;
-        });
-
-        setCursor(nextJobs?.at(-1)?.id ?? null);
+        await loadJobs();
     };
 
     const onRenderStart = (data: { jobId: string; job: RenderJob }) => {
@@ -121,7 +105,7 @@ export const RenderProvider = ({ children }: RenderProviderProps) => {
 
         if (!socket) return;
 
-        initJobs();
+        loadJobs();
 
         socket.on("render-start", onRenderStart);
         socket.on("frame-update", onFrameUpdate);
@@ -135,14 +119,16 @@ export const RenderProvider = ({ children }: RenderProviderProps) => {
     }, [getSocket]);
 
     useEffect(() => {
-        setCursor(null);
+        setCurrentPage(1);
         refresh();
     }, [hostname]);
 
+    useEffect(() => {
+        refresh();
+    }, [currentPage]);
+
     return (
-        <RenderContext.Provider
-            value={{ jobs, setJobs, refresh, loadMoreJobs }}
-        >
+        <RenderContext.Provider value={{ jobs, setJobs, refresh, currentPage, setCurrentPage, maxPages }}>
             {children}
         </RenderContext.Provider>
     );

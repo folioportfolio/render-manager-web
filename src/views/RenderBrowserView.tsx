@@ -26,19 +26,7 @@ export default function RenderBrowserView() {
     const items = [
         {
             title: "In Progress",
-            data: inProgressJobs.concat([{
-                id: "aaaaa-aaaaa-aaaa-aaaaaa-aaa",
-                currentFrame: 5,
-                frameStart:  1,
-                frameEnd:  10,
-                state:  "inProgress",
-                project:  "project.blend",
-                timeStart:  451521541,
-                engine:  "CYCLES",
-                frameStep:  1,
-                resolutionX:  1920,
-                resolutionY:  1080
-            }]),
+            data: inProgressJobs,
             display: "grid md:grid-cols-2 sm:grid-cols-1 gap-4"
         },
         {
@@ -82,25 +70,31 @@ export default function RenderBrowserView() {
                 <Pagination className="my-3">
                     <PaginationContent>
                         <PaginationItem>
-                            <PaginationPrevious href="#" />
+                            <PaginationPrevious onClick={() => renderContext?.setCurrentPage(Math.max(renderContext?.currentPage - 1, 1))} />
                         </PaginationItem>
+
+                        {[...Array(Math.min(renderContext.maxPages, 3)).keys()].map((_, i) => (
+                            <PaginationItem key={i}>
+                                <PaginationLink onClick={() => renderContext?.setCurrentPage(i + 1)} isActive={renderContext.currentPage === i + 1}>{i + 1}</PaginationLink>
+                            </PaginationItem>
+                        ))}
+
+                        {renderContext.maxPages > 4 && (
+                            <PaginationItem key={renderContext.maxPages}>
+                                <PaginationEllipsis />
+                            </PaginationItem>
+                        )}
+
+                        {renderContext.maxPages > 3 && (
+                            <>
+                                <PaginationItem key={renderContext.maxPages}>
+                                    <PaginationLink onClick={() => renderContext?.setCurrentPage(renderContext.maxPages)}>{renderContext.maxPages}</PaginationLink>
+                                </PaginationItem>
+                            </>
+                        )}
+
                         <PaginationItem>
-                            <PaginationLink href="#">1</PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationLink href="#">2</PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationLink href="#">3</PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationEllipsis />
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationLink href="#">10</PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationNext href="#" />
+                            <PaginationNext onClick={() => renderContext?.setCurrentPage(Math.min(renderContext?.currentPage + 1, renderContext?.maxPages))} />
                         </PaginationItem>
                     </PaginationContent>
                 </Pagination>

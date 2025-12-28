@@ -2,10 +2,7 @@ import { io, Socket } from "socket.io-client";
 import { type RenderJob } from "../types/types.ts";
 import { useServerStore } from "../store/serverStore";
 import { useCallback, useEffect, useRef } from "react";
-
-const API_GET = "api/render";
-const DEFAULT_COUNT = 12;
-const LOAD_COUNT = 5;
+import type {GetRenderJobsPagedResponse} from "@/core/types/responses.ts";
 
 export const useFetcher = () => {
     const socketRef = useRef<Socket | null>(null);
@@ -28,12 +25,12 @@ export const useFetcher = () => {
         return socketRef.current;
     }, []);
 
-    const getRenderJobs = useCallback(async (): Promise<RenderJob[]> => {
+    const getRenderJobs = useCallback(async (page: number = 1): Promise<GetRenderJobsPagedResponse> => {
         if (!hostname)
             throw new Error("No server configured");
 
         const response = await fetch(
-            `${hostname}/${API_GET}?count=${DEFAULT_COUNT}`,
+            `${hostname}/${import.meta.env.VITE_API_GET}?count=${import.meta.env.VITE_DEFAULT_COUNT}&page=${page}`,
         );
 
         return await response.json();
@@ -44,7 +41,7 @@ export const useFetcher = () => {
             if (!hostname)
                 throw new Error("No server configured");
 
-            let url = `${hostname}/${API_GET}?count=${LOAD_COUNT}&cursor=${cursor}`;
+            let url = `${hostname}/${import.meta.env.VITE_API_GET}?count=${import.meta.env.VITE_LOAD_COUNT}&cursor=${cursor}`;
 
             const response = await fetch(url);
             return await response.json();

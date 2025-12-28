@@ -27,7 +27,7 @@ export const useFetcher = () => {
 
     const getRenderJobs = useCallback(async (page: number = 1): Promise<GetRenderJobsPagedResponse> => {
         if (!hostname)
-            throw new Error("No server configured");
+            return {items: [], totalCount: 0};
 
         const response = await fetch(
             `${hostname}/${import.meta.env.VITE_API_GET}?count=${import.meta.env.VITE_DEFAULT_COUNT}&page=${page}`,
@@ -39,7 +39,7 @@ export const useFetcher = () => {
     const getMoreRenderJobs = useCallback(
         async (cursor: string): Promise<RenderJob[]> => {
             if (!hostname)
-                throw new Error("No server configured");
+                return [];
 
             let url = `${hostname}/${import.meta.env.VITE_API_GET}?count=${import.meta.env.VITE_LOAD_COUNT}&cursor=${cursor}`;
 

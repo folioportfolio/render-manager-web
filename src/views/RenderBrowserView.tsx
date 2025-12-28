@@ -27,18 +27,37 @@ export default function RenderBrowserView() {
         {
             title: "In Progress",
             data: inProgressJobs,
-            display: "grid md:grid-cols-2 sm:grid-cols-1 gap-4"
+            display: "grid lg:grid-cols-2 sm:grid-cols-1 gap-4"
         },
         {
             title: "Finished",
             data: finishedJobs,
-            display: "grid md:grid-cols-4 sm:grid-cols-1 gap-4"
+            display: "grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-4"
         }
     ];
 
     // const loadMoreJobs = (info: { distanceFromEnd: number; }): void => {
     //     renderContext.loadMoreJobs();
     // }
+
+    type PageInfo = number | "...";
+    const getPages = (page: number, maxPages: number, range: number = 2): PageInfo[] => {
+        const pages: number[] = [];
+
+        for (let i = 1; i <= maxPages; i++) {
+            if (i === 1 || i === maxPages || Math.abs(i - page) <= range)
+                pages.push(i);
+        }
+
+        const pagesEllipsis: PageInfo[] = [];
+        for (let i = 0; i < pages.length; i++) {
+            pagesEllipsis.push(pages[i]);
+            if (i+1 !== pages.length && Math.abs(pages[i] - pages[i+1]) > 1)
+                pagesEllipsis.push("...");
+        }
+
+        return pagesEllipsis;
+    }
 
     return (
         <>
@@ -73,25 +92,14 @@ export default function RenderBrowserView() {
                             <PaginationPrevious onClick={() => renderContext?.setCurrentPage(Math.max(renderContext?.currentPage - 1, 1))} />
                         </PaginationItem>
 
-                        {[...Array(Math.min(renderContext.maxPages, 3)).keys()].map((_, i) => (
-                            <PaginationItem key={i}>
-                                <PaginationLink onClick={() => renderContext?.setCurrentPage(i + 1)} isActive={renderContext.currentPage === i + 1}>{i + 1}</PaginationLink>
+                        {getPages(renderContext.currentPage, renderContext.maxPages).map((p, i) => (
+                            <PaginationItem key={`${p}${i}`}>
+                                {(p === "...") ?
+                                    (<PaginationEllipsis />) :
+                                    (<PaginationLink onClick={() => renderContext?.setCurrentPage(p)} isActive={renderContext.currentPage === p}>{p}</PaginationLink>)
+                                }
                             </PaginationItem>
                         ))}
-
-                        {renderContext.maxPages > 4 && (
-                            <PaginationItem key={renderContext.maxPages}>
-                                <PaginationEllipsis />
-                            </PaginationItem>
-                        )}
-
-                        {renderContext.maxPages > 3 && (
-                            <>
-                                <PaginationItem key={renderContext.maxPages}>
-                                    <PaginationLink onClick={() => renderContext?.setCurrentPage(renderContext.maxPages)}>{renderContext.maxPages}</PaginationLink>
-                                </PaginationItem>
-                            </>
-                        )}
 
                         <PaginationItem>
                             <PaginationNext onClick={() => renderContext?.setCurrentPage(Math.min(renderContext?.currentPage + 1, renderContext?.maxPages))} />

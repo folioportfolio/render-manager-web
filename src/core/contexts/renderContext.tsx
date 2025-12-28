@@ -103,9 +103,8 @@ export const RenderProvider = ({ children }: RenderProviderProps) => {
     useEffect(() => {
         const socket = getSocket();
 
-        if (!socket) return;
-
-        loadJobs();
+        if (!socket)
+            return;
 
         socket.on("render-start", onRenderStart);
         socket.on("frame-update", onFrameUpdate);
@@ -116,10 +115,11 @@ export const RenderProvider = ({ children }: RenderProviderProps) => {
             socket?.off("frame-update");
             socket?.off("render-end");
         };
-    }, [getSocket]);
+    }, [getSocket, hostname]);
 
     useEffect(() => {
         setCurrentPage(1);
+        setMaxPages(1);
         refresh();
     }, [hostname]);
 

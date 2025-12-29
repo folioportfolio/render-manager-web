@@ -48,7 +48,7 @@ export default function RenderInfo({ id, timeStart, timeEnd, frameStart, frameEn
         <>
             <Card className="flex gap-1" {...props}>
                 <CardHeader>
-                    <span>Render {project.substring(project.lastIndexOf("\\") + 1)}</span>
+                    <span className="text-xl">Render {project.substring(project.lastIndexOf("\\") + 1)}</span>
                     <CardAction>
                         {getRenderState(state)}
                     </CardAction>

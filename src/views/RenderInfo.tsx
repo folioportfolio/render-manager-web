@@ -3,8 +3,9 @@ import { type RenderState } from "../core/types/types";
 import {Progress} from "@/ui/Progress.tsx";
 import {Card, CardAction, CardContent, CardFooter, CardHeader} from "@/ui/Card.tsx";
 import {Badge} from "@/ui/Badge.tsx";
+import type {HTMLAttributes} from "react";
 
-export interface RenderInfoProps {
+export interface RenderInfoProps extends HTMLAttributes<HTMLDivElement> {
     id: string;
     frameStart: number;
     frameEnd: number;
@@ -18,8 +19,7 @@ export interface RenderInfoProps {
     canceled: boolean;
 }
 
-export default function RenderInfo({ id, timeStart, frameStart, frameEnd, currentFrame, project, state, finished, canceled }: RenderInfoProps) {
-
+export default function RenderInfo({ id, timeStart, timeEnd, frameStart, frameEnd, currentFrame, project, state, finished, canceled, ...props }: RenderInfoProps) {
     const getRenderState = (state: RenderState): React.ReactNode => {
         type IconMap = { [K in RenderState]: any }
 
@@ -37,9 +37,16 @@ export default function RenderInfo({ id, timeStart, frameStart, frameEnd, curren
         );
     }
 
+    const getCurrentProgress = (): number => {
+        if (finished || canceled || !currentFrame)
+            return 100;
+
+        return  currentFrame / (frameEnd - frameStart) * 100;
+    };
+
     return (
         <>
-            <Card className="flex gap-1 hover:bg-accent">
+            <Card className="flex gap-1" {...props}>
                 <CardHeader>
                     <span>Render {project.substring(project.lastIndexOf("\\") + 1)}</span>
                     <CardAction>
@@ -55,7 +62,7 @@ export default function RenderInfo({ id, timeStart, frameStart, frameEnd, curren
 
                     <div className="my-3">
                         <Progress
-                            value={currentFrame ? currentFrame / (frameEnd - frameStart) * 100 : 100}
+                            value={getCurrentProgress()}
                             color={finished ? (canceled ? 'red-900': 'green-900') : 'blue-400'} />
                     </div>
 

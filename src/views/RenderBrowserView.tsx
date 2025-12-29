@@ -4,9 +4,11 @@ import { type RenderJob } from "../core/types/types";
 import RenderInfo from "@/views/RenderInfo.tsx";
 import {Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink,
     PaginationNext, PaginationPrevious} from "@/ui/Pagination.tsx";
+import {useNavigate} from "react-router";
 
 export default function RenderBrowserView() {
     const renderContext = useRenderJobs();
+    const navigate = useNavigate();
 
     if (!renderContext)
         return null;
@@ -70,6 +72,7 @@ export default function RenderBrowserView() {
                             <div className={section.display}>
                                 {section.data.map((item) => (
                                     <RenderInfo key={item.id}
+                                                className="hover:bg-accent"
                                                 id={item.id}
                                                 finished={doneStates.includes(item.state)}
                                                 canceled={item.state === "canceled"}
@@ -79,7 +82,8 @@ export default function RenderBrowserView() {
                                                 frameStart={item.frameStart}
                                                 timeStart={item.timeStart}
                                                 timeEnd={item.timeLastFrame}
-                                                project={item.project} />
+                                                project={item.project}
+                                                onClick={() => navigate(`/render/${item.id}`)}/>
                                 ))}
                             </div>
                         </div>

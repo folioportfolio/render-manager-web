@@ -25,29 +25,30 @@ export const useFetcher = () => {
         return socketRef.current;
     }, []);
 
-    const getRenderJobs = useCallback(async (page: number = 1): Promise<GetRenderJobsPagedResponse> => {
-        if (!hostname)
-            return {items: [], totalCount: 0};
+    const getRenderJobs = useCallback(
+        async (page: number = 1): Promise<GetRenderJobsPagedResponse> => {
+            if (!hostname)
+                return {items: [], totalCount: 0};
 
-        const response = await fetch(
-            `${hostname}/${import.meta.env.VITE_API_GET}?count=${import.meta.env.VITE_DEFAULT_COUNT}&page=${page}`,
-        );
+            const response = await fetch(
+                `${hostname}/${import.meta.env.VITE_API_GET}?count=${import.meta.env.VITE_DEFAULT_COUNT}&page=${page}`,
+            );
 
-        return await response.json();
+            return await response.json();
     }, [hostname]);
 
-    const getMoreRenderJobs = useCallback(
-        async (cursor: string): Promise<RenderJob[]> => {
+    const getRenderJob = useCallback(
+        async (id: string): Promise<RenderJob | null> => {
             if (!hostname)
-                return [];
+                return null;
 
-            let url = `${hostname}/${import.meta.env.VITE_API_GET}?count=${import.meta.env.VITE_LOAD_COUNT}&cursor=${cursor}`;
+            let url = `${hostname}/${import.meta.env.VITE_API_GET}?id=${id}`;
 
             const response = await fetch(url);
             return await response.json();
         },
-        [hostname],
+        [hostname]
     );
 
-    return { getSocket, getRenderJobs, getMoreRenderJobs };
+    return { getSocket, getRenderJobs, getRenderJob };
 };

@@ -56,7 +56,7 @@ export default function RenderInfo({ id, timeStart, timeEnd, frameStart, frameEn
                 <CardContent>
                     <div className="flex flex-col gap-1">
                         <span className="text-sm">Total frames: {frameEnd - frameStart + 1}</span>
-                        <span className="text-sm">Start time: {format(new Date(timeStart * 1000), "dd.MM.yyyy HH:mm:ss")}</span>
+                        <span className="text-sm">Start time: {format(new Date(timeStart), "dd.MM.yyyy HH:mm:ss")}</span>
                         <span className="text-sm">Current frame: {currentFrame ?? '-'}</span>
                     </div>
 

@@ -37,7 +37,7 @@ export default function RenderInfoView() {
             const frame = job.frames[i];
             data.push({
                 frame: frame.frameNumber,
-                time: frame.timestamp - lastTime,
+                time: Math.floor(frame.timestamp - lastTime),
             });
 
             lastTime = frame.timestamp;
@@ -143,6 +143,17 @@ export default function RenderInfoView() {
                                 </ChartContainer>
                             </CardContent>
                         </CardHeader>
+                    </Card>
+                </div>
+
+                <div>
+                    <Card>
+                        <CardHeader>
+                            Render Info
+                        </CardHeader>
+                        <CardContent>
+                            <span className="text-sm">{renderJob.frames?.slice(-1)[0]?.info}</span>
+                        </CardContent>
                     </Card>
                 </div>
             </div>

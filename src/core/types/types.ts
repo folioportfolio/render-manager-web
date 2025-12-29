@@ -9,16 +9,21 @@ export interface RenderJob {
     project: string;
     resolutionX: number;
     resolutionY: number;
+    state: RenderState;
+    software?: string;
+    version?: string;
+
     currentFrame?: number;
     frames?: JobFrame[];
-    state: RenderState;
 }
 
 export interface JobFrame {
     id: string;
     jobId: string;
     frameNumber: number;
+    time: number;
     timestamp: number;
+    info?: string;
 }
 
 export type RenderState = "started" | "inProgress" | "finished" | "canceled";

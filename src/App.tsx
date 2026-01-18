@@ -8,6 +8,7 @@ import {SidebarProvider, SidebarTrigger} from "@/ui/Sidebar.tsx";
 import {BrowserRouter, Route, Routes} from "react-router";
 import RenderBrowserView from "@/views/RenderBrowserView.tsx";
 import RenderInfoView from "@/views/RenderInfoView.tsx";
+import AppKeysManagementView from "@/views/AppKeysManagementView.tsx";
 
 export default function App() {
     const setHostname = useServerStore((s) => s.setHostname);
@@ -30,6 +31,7 @@ export default function App() {
                         <Routes>
                             <Route index element={<RenderBrowserView />} />
                             <Route path="render/:id" element={<RenderInfoView />} />
+                            <Route path="settings/appkeys" element={<AppKeysManagementView />} />
                         </Routes>
                     </BrowserRouter>
                 </ThemeProvider>

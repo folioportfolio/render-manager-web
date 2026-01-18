@@ -26,4 +26,9 @@ export interface JobFrame {
     info?: string;
 }
 
+export interface AppKey {
+    apiKey: string;
+    dateCreated: number;
+}
+
 export type RenderState = "started" | "inProgress" | "finished" | "canceled";

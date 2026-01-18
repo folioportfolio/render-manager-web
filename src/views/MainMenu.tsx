@@ -2,24 +2,24 @@ import {Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupConten
     SidebarHeader, SidebarMenu,
     SidebarMenuButton, SidebarMenuItem} from "@/ui/Sidebar.tsx";
 import {useNavigate} from "react-router";
-import { HomeIcon, SettingsIcon } from "lucide-react"
-import {Popover, PopoverContent, PopoverTrigger} from "@/ui/Popover.tsx";
-import {Button} from "@/ui/Button.tsx";
-import ServerSettingsView from "@/views/ServerSettingsView.tsx";
-import {useServerStore} from "@/core/store/serverStore.ts";
-import {useState} from "react";
+import { HomeIcon, Computer } from "lucide-react"
 import logo from "@/assets/logo.svg";
+import LoginView from "@/views/LoginView.tsx";
+import ServerManagementView from "@/views/ServerManagementView.tsx";
 
 export default function MainMenu() {
     const navigate = useNavigate();
-    const [serverSettingsOpen, setServerSettingsOpen] = useState(false);
-    const {hostname} = useServerStore();
 
     const menuItems = [
         {
             label: "Renders",
             href: "/",
             icon: HomeIcon
+        },
+        {
+            label: "App Keys",
+            href: "/settings/appkeys",
+            icon: Computer
         }
     ];
 
@@ -49,19 +49,10 @@ export default function MainMenu() {
                     </SidebarGroup>
                 </SidebarContent>
                 <SidebarFooter>
-                    <div className="flex flex-row items-center">
-                        <span className="flex grow text-sm ml-2">{hostname}</span>
-                        <Popover open={serverSettingsOpen} onOpenChange={setServerSettingsOpen}>
-                            <PopoverTrigger className="flex self-end" asChild>
-                                <Button variant="outline" size="icon" >
-                                    <SettingsIcon />
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent>
-                                <ServerSettingsView onCancel={() => setServerSettingsOpen(false)}
-                                                    onSaved={() => setServerSettingsOpen(false)} />
-                            </PopoverContent>
-                        </Popover>
+                    <div className="flex flex-col pl-2 gap-2">
+                        <LoginView />
+                        <hr/>
+                        <ServerManagementView />
                     </div>
                 </SidebarFooter>
             </Sidebar>

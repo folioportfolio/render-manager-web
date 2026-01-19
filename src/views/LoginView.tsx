@@ -4,7 +4,7 @@ import {Button} from "@/ui/Button.tsx";
 import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "firebase/auth";
 import {auth} from "@/core/auth/firebase.ts";
 import {useEffect, useState} from "react";
-import {useFetcher} from "@/core/hooks/serverFetcher.ts";
+import {useFetcher} from "@/core/hooks/useFetcher.ts";
 
 export default function LoginView() {
     const [username, setUsername] = useState<string | null>(null);

@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { RenderProvider } from './core/contexts/renderContext';
 import { getUserData } from './core/hooks/userSettings';
 import { useServerStore } from './core/store/serverStore';
 import MainMenu from './views/MainMenu.tsx';
@@ -9,6 +8,9 @@ import {BrowserRouter, Route, Routes} from "react-router";
 import RenderBrowserView from "@/views/RenderBrowserView.tsx";
 import RenderInfoView from "@/views/RenderInfoView.tsx";
 import AppKeysManagementView from "@/views/AppKeysManagementView.tsx";
+import {AuthProvider} from "@/core/contexts/authContext.tsx";
+import {SocketProvider} from "@/core/contexts/socketContext.tsx";
+import {SocketEventInitializer} from "@/core/helpers/socketEventInitializer.ts";
 
 export default function App() {
     const setHostname = useServerStore((s) => s.setHostname);
@@ -21,21 +23,24 @@ export default function App() {
     }, []);
 
     return (
-        <RenderProvider>
-            <SidebarProvider>
-                <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-                    <BrowserRouter>
-                        <SidebarTrigger />
-                        <MainMenu />
+        <AuthProvider>
+            <SocketProvider>
+                <SidebarProvider>
+                    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+                        <SocketEventInitializer />
+                        <BrowserRouter>
+                            <SidebarTrigger />
+                            <MainMenu />
 
-                        <Routes>
-                            <Route index element={<RenderBrowserView />} />
-                            <Route path="render/:id" element={<RenderInfoView />} />
-                            <Route path="settings/appkeys" element={<AppKeysManagementView />} />
-                        </Routes>
-                    </BrowserRouter>
-                </ThemeProvider>
-            </SidebarProvider>
-        </RenderProvider>
+                            <Routes>
+                                <Route index element={<RenderBrowserView />} />
+                                <Route path="render/:id" element={<RenderInfoView />} />
+                                <Route path="settings/appkeys" element={<AppKeysManagementView />} />
+                            </Routes>
+                        </BrowserRouter>
+                    </ThemeProvider>
+                </SidebarProvider>
+            </SocketProvider>
+        </AuthProvider>
     );
 }

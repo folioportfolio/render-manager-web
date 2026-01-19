@@ -1,5 +1,5 @@
 import { useParams} from "react-router";
-import {useFetcher} from "@/core/hooks/serverFetcher.ts";
+import {useFetcher} from "@/core/hooks/useFetcher.ts";
 import {useEffect, useState} from "react";
 import type {RenderJob} from "@/core/types/types.ts";
 import RenderInfo from "@/views/RenderInfo.tsx";
@@ -8,6 +8,7 @@ import {useServerStore} from "@/core/store/serverStore.ts";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/ui/Card.tsx";
 import {type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent} from "@/ui/Chart.tsx";
 import {Area, AreaChart, CartesianGrid, XAxis, YAxis} from "recharts";
+import {useAuth} from "@/core/contexts/authContext.tsx";
 
 type ChartData = { frame: number, time: number  };
 
@@ -18,6 +19,7 @@ export default function RenderInfoView() {
     const [renderJob, setRenderJob] = useState<RenderJob>();
     const [chartData, setChartData] = useState<ChartData[]>([]);
 
+    const user = useAuth();
     const hostname = useServerStore();
 
     const prepareRenderJob = (job: RenderJob | null) => {
@@ -52,8 +54,8 @@ export default function RenderInfoView() {
 
         getRenderJob(params.id)
             .then(prepareRenderJob)
-            .catch((err) => {alert(err)});
-    }, [hostname]);
+            .catch((err) => {console.log(err)});
+    }, [hostname, user]);
 
     const doneStates = ["finished", "canceled"]
 

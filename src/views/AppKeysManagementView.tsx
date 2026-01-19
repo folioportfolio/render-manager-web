@@ -1,5 +1,5 @@
 import {Button} from "@/ui/Button.tsx";
-import {useFetcher} from "@/core/hooks/serverFetcher.ts";
+import {useFetcher} from "@/core/hooks/useFetcher.ts";
 import {useEffect, useState} from "react";
 import type {AppKey} from "@/core/types/types.ts";
 import {Input} from "@/ui/Input.tsx";

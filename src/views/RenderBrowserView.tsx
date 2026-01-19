@@ -1,23 +1,31 @@
-import { useMemo } from "react";
-import { useRenderJobs } from "../core/contexts/renderContext";
+import {useEffect, useMemo } from "react";
 import { type RenderJob } from "../core/types/types";
 import RenderInfo from "@/views/RenderInfo.tsx";
 import {Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink,
     PaginationNext, PaginationPrevious} from "@/ui/Pagination.tsx";
 import {useNavigate} from "react-router";
+import {useRenderJobsStore} from "@/core/store/renderJobsStore.ts";
+import {useFetcher} from "@/core/hooks/useFetcher.ts";
+import {useServerStore} from "@/core/store/serverStore.ts";
+import {useAuth} from "@/core/contexts/authContext.tsx";
 
 export default function RenderBrowserView() {
-    const renderContext = useRenderJobs();
+    const jobs = useRenderJobsStore(s => s.jobs);
+    const currentPage = useRenderJobsStore(s => s.currentPage);
+    const maxPages = useRenderJobsStore(s => s.maxPages);
+    const setJobs = useRenderJobsStore(s => s.setJobsFromApi);
+    const setCurrentPage = useRenderJobsStore(s => s.setPage);
+    const hostname = useServerStore(s => s.hostname);
+    const user = useAuth();
+
+    const { getRenderJobs } = useFetcher();
     const navigate = useNavigate();
 
-    if (!renderContext)
-        return null;
-
     const allJobs = useMemo(() => {
-        return Array.from(renderContext.jobs.values()).sort((a, b) =>
+        return Array.from(jobs.values()).sort((a, b) =>
             b.timeStart - a.timeStart
         );
-    }, [renderContext.jobs]);
+    }, [jobs]);
 
     const runningStates = ["inProgress", "started"];
     const doneStates = ["finished", "canceled"]
@@ -38,10 +46,6 @@ export default function RenderBrowserView() {
         }
     ];
 
-    // const loadMoreJobs = (info: { distanceFromEnd: number; }): void => {
-    //     renderContext.loadMoreJobs();
-    // }
-
     type PageInfo = number | "...";
     const getPages = (page: number, maxPages: number, range: number = 2): PageInfo[] => {
         const pages: number[] = [];
@@ -60,6 +64,12 @@ export default function RenderBrowserView() {
 
         return pagesEllipsis;
     }
+
+    useEffect(() => {
+        getRenderJobs(currentPage)
+            .then(res => setJobs(res.items, res.totalCount))
+            .catch(err => console.log(err));
+    }, [currentPage, hostname, user]);
 
     return (
         <>
@@ -93,20 +103,20 @@ export default function RenderBrowserView() {
                 <Pagination className="my-3">
                     <PaginationContent>
                         <PaginationItem>
-                            <PaginationPrevious onClick={() => renderContext?.setCurrentPage(Math.max(renderContext?.currentPage - 1, 1))} />
+                            <PaginationPrevious onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))} />
                         </PaginationItem>
 
-                        {getPages(renderContext.currentPage, renderContext.maxPages).map((p, i) => (
+                        {getPages(currentPage, maxPages).map((p, i) => (
                             <PaginationItem key={`${p}${i}`}>
                                 {(p === "...") ?
                                     (<PaginationEllipsis />) :
-                                    (<PaginationLink onClick={() => renderContext?.setCurrentPage(p)} isActive={renderContext.currentPage === p}>{p}</PaginationLink>)
+                                    (<PaginationLink onClick={() => setCurrentPage(p)} isActive={currentPage === p}>{p}</PaginationLink>)
                                 }
                             </PaginationItem>
                         ))}
 
                         <PaginationItem>
-                            <PaginationNext onClick={() => renderContext?.setCurrentPage(Math.min(renderContext?.currentPage + 1, renderContext?.maxPages))} />
+                            <PaginationNext onClick={() => setCurrentPage(Math.min(currentPage + 1, maxPages))} />
                         </PaginationItem>
                     </PaginationContent>
                 </Pagination>

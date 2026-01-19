@@ -7,5 +7,8 @@ type ServerState = {
 
 export const useServerStore = create<ServerState>((set) => ({
     hostname: "",
-    setHostname: (hostname) => set({ hostname }),
+    setHostname: (hostname) => {
+        console.log(`Setting: ${hostname}`);
+        set({ hostname })
+    },
 }));

@@ -77,12 +77,12 @@ export default function RenderBrowserView() {
                 <div className="flex-1 pr-6">
                     {items.filter(x => x.data.length > 0).map((section) => (
                         <div key={section.title}>
-                            <h1 className="my-4 text-4xl">{section.title}</h1>
+                            <h1 className="my-8 text-4xl">{section.title}</h1>
 
                             <div className={section.display}>
                                 {section.data.map((item) => (
                                     <RenderInfo key={item.id}
-                                                className="hover:bg-accent"
+                                                className="hover:bg-accent cursor-pointer"
                                                 id={item.id}
                                                 finished={doneStates.includes(item.state)}
                                                 canceled={item.state === "canceled"}

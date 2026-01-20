@@ -89,6 +89,7 @@ export default function RenderInfoView() {
                             currentFrame={renderJob.currentFrame}
                             frameEnd={renderJob.frameEnd}
                             frameStart={renderJob.frameStart}
+                            framesRendered={renderJob.framesRendered ?? 0}
                             timeStart={renderJob.timeStart}
                             timeEnd={renderJob.timeLastFrame}
                             project={renderJob.project} />

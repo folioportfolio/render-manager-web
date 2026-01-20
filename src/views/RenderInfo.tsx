@@ -2,8 +2,8 @@ import { format } from "date-fns";
 import { type RenderState } from "../core/types/types";
 import {Progress} from "@/ui/Progress.tsx";
 import {Card, CardAction, CardContent, CardFooter, CardHeader} from "@/ui/Card.tsx";
-import {Badge} from "@/ui/Badge.tsx";
 import type {HTMLAttributes} from "react";
+import {getRenderState} from "@/helpers/renderStateHelper.tsx";
 
 export interface RenderInfoProps extends HTMLAttributes<HTMLDivElement> {
     id: string;
@@ -20,23 +20,6 @@ export interface RenderInfoProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export default function RenderInfo({ id, timeStart, timeEnd, frameStart, frameEnd, currentFrame, project, state, finished, canceled, ...props }: RenderInfoProps) {
-    const getRenderState = (state: RenderState): React.ReactNode => {
-        type IconMap = { [K in RenderState]: any }
-
-        const colorMap: IconMap = {
-            finished: "bg-green-900",
-            canceled: "bg-red-900",
-            inProgress: "bg-blue-400",
-            started: "bg-blue-900",
-        };
-
-        return (
-            <div className="flex flex-row gap-2 items-center">
-                <Badge className={colorMap[state]} variant="outline">{state.charAt(0).toUpperCase() + state.slice(1)}</Badge>
-            </div>
-        );
-    }
-
     const getCurrentProgress = (): number => {
         if (finished || canceled || !currentFrame)
             return 100;

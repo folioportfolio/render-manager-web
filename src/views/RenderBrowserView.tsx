@@ -1,13 +1,14 @@
 import {useEffect, useMemo } from "react";
 import { type RenderJob } from "../core/types/types";
-import RenderInfo from "@/views/RenderInfo.tsx";
 import {Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink,
     PaginationNext, PaginationPrevious} from "@/ui/Pagination.tsx";
-import {useNavigate} from "react-router";
 import {useRenderJobsStore} from "@/core/store/renderJobsStore.ts";
 import {useFetcher} from "@/core/hooks/useFetcher.ts";
 import {useServerStore} from "@/core/store/serverStore.ts";
 import {useAuth} from "@/core/contexts/authContext.tsx";
+import RenderJobList from "@/views/RenderJobs/RenderJobList.tsx";
+import RenderJobGrid from "@/views/RenderJobs/RenderJobGrid.tsx";
+import {doneStates, runningStates} from "@/helpers/renderStateHelper.tsx";
 
 export default function RenderBrowserView() {
     const jobs = useRenderJobsStore(s => s.jobs);
@@ -19,7 +20,6 @@ export default function RenderBrowserView() {
     const user = useAuth();
 
     const { getRenderJobs } = useFetcher();
-    const navigate = useNavigate();
 
     const allJobs = useMemo(() => {
         return Array.from(jobs.values()).sort((a, b) =>
@@ -27,24 +27,8 @@ export default function RenderBrowserView() {
         );
     }, [jobs]);
 
-    const runningStates = ["inProgress", "started"];
-    const doneStates = ["finished", "canceled"]
-
     const inProgressJobs: RenderJob[] = allJobs.filter(x => runningStates.includes(x.state));
     const finishedJobs: RenderJob[] = allJobs.filter(x => doneStates.includes(x.state));
-
-    const items = [
-        {
-            title: "In Progress",
-            data: inProgressJobs,
-            display: "grid lg:grid-cols-2 sm:grid-cols-1 gap-4"
-        },
-        {
-            title: "Finished",
-            data: finishedJobs,
-            display: "grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-4"
-        }
-    ];
 
     type PageInfo = number | "...";
     const getPages = (page: number, maxPages: number, range: number = 2): PageInfo[] => {
@@ -73,32 +57,16 @@ export default function RenderBrowserView() {
 
     return (
         <>
-            <div className="flex flex-col w-full">
-                <div className="flex-1 pr-6">
-                    {items.filter(x => x.data.length > 0).map((section) => (
-                        <div key={section.title}>
-                            <h1 className="my-8 text-4xl">{section.title}</h1>
+            <div className="grid grid-rows-3 w-full h-screen" style={{gridTemplateRows: "1fr 3fr auto"}}>
+                <section className="flex flex-col pr-4 w-full">
+                    <h1 className="my-8 text-4xl items-stretch font-logo">In Progress</h1>
+                    <RenderJobGrid items={inProgressJobs}/>
+                </section>
 
-                            <div className={section.display}>
-                                {section.data.map((item) => (
-                                    <RenderInfo key={item.id}
-                                                className="hover:bg-accent cursor-pointer"
-                                                id={item.id}
-                                                finished={doneStates.includes(item.state)}
-                                                canceled={item.state === "canceled"}
-                                                state={item.state}
-                                                currentFrame={item.currentFrame}
-                                                frameEnd={item.frameEnd}
-                                                frameStart={item.frameStart}
-                                                timeStart={item.timeStart}
-                                                timeEnd={item.timeLastFrame}
-                                                project={item.project}
-                                                onClick={() => navigate(`/render/${item.id}`)}/>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                <section className="flex flex-col pr-4 w-full min-h-0">
+                    <h1 className="my-8 text-4xl items-stretch font-logo">Completed</h1>
+                    <RenderJobList items={finishedJobs}/>
+                </section>
 
                 <Pagination className="my-3">
                     <PaginationContent>

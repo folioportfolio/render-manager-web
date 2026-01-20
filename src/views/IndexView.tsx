@@ -7,9 +7,12 @@ import RenderBrowserView from "@/views/RenderBrowserView.tsx";
 import RenderInfoView from "@/views/RenderInfoView.tsx";
 import AppKeysManagementView from "@/views/AppKeysManagementView.tsx";
 import {useAuth} from "@/core/contexts/authContext.tsx";
+import SplashView from "@/views/SplashView.tsx";
 
 export default function  IndexView() {
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
+
+    const getSplash = () => <SplashView />;
 
     const getAnonymousContent = () => <WelcomeView/>
 
@@ -31,6 +34,8 @@ export default function  IndexView() {
         </>
     );
 
+    if (loading)
+        return getSplash();
     if (user)
         return getContent();
     else

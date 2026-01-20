@@ -5,6 +5,7 @@ export interface RenderJob {
     frameEnd: number;
     engine: string;
     timeStart: number;
+    timeEnd?: number;
     timeLastFrame?: number;
     project: string;
     resolutionX: number;

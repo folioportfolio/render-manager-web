@@ -27,6 +27,7 @@ export default function RenderJobGrid({items} : RenderListProps) {
                                             currentFrame={item.currentFrame}
                                             frameEnd={item.frameEnd}
                                             frameStart={item.frameStart}
+                                            framesRendered={item.framesRendered ?? 0}
                                             timeStart={item.timeStart}
                                             timeEnd={item.timeLastFrame}
                                             project={item.project}

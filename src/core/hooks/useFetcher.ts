@@ -1,6 +1,6 @@
 import { type AppKey, type RenderJob } from "../types/types.ts";
 import { useServerStore } from "../store/serverStore";
-import { useCallback } from "react";
+import { useCallback, useEffect} from "react";
 import type {GetRenderJobsPagedResponse} from "@/core/types/responses.ts";
 import {authFetch} from "@/core/helpers/authHelper.ts";
 import {useAuth} from "@/core/contexts/authContext.tsx";
@@ -8,6 +8,12 @@ import {useAuth} from "@/core/contexts/authContext.tsx";
 export const useFetcher = () => {
     const hostname = useServerStore((s) => s.hostname);
     const { user, loading } = useAuth();
+
+    useEffect(() => {
+        if (loading || !user) return;
+
+        registerUser(user.displayName ?? "Unknown user").catch(console.error);
+    }, [user, loading]);
 
     const getRenderJobs = useCallback(
         async (page: number = 1): Promise<GetRenderJobsPagedResponse> => {

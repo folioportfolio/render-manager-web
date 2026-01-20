@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { formatDistanceToNow} from "date-fns";
 import { type RenderState } from "../core/types/types";
 import {Progress} from "@/ui/Progress.tsx";
 import {Card, CardAction, CardContent, CardFooter, CardHeader} from "@/ui/Card.tsx";
@@ -9,6 +9,7 @@ export interface RenderInfoProps extends HTMLAttributes<HTMLDivElement> {
     id: string;
     frameStart: number;
     frameEnd: number;
+    framesRendered: number;
     currentFrame?: number;
     timeStart: number;
     timeEnd?: number;
@@ -19,7 +20,7 @@ export interface RenderInfoProps extends HTMLAttributes<HTMLDivElement> {
     canceled: boolean;
 }
 
-export default function RenderInfo({ id, timeStart, timeEnd, frameStart, frameEnd, currentFrame, project, state, finished, canceled, ...props }: RenderInfoProps) {
+export default function RenderInfo({ id, timeStart, timeEnd, frameStart, frameEnd, framesRendered, currentFrame, project, state, finished, canceled, ...props }: RenderInfoProps) {
     const getCurrentProgress = (): number => {
         if (finished || canceled || !currentFrame)
             return 100;
@@ -38,8 +39,8 @@ export default function RenderInfo({ id, timeStart, timeEnd, frameStart, frameEn
                 </CardHeader>
                 <CardContent>
                     <div className="flex flex-col gap-1">
-                        <span className="text-sm">Total frames: {frameEnd - frameStart + 1}</span>
-                        <span className="text-sm">Start time: {format(new Date(timeStart), "dd.MM.yyyy HH:mm:ss")}</span>
+                        <span className="text-sm">Started: {formatDistanceToNow(new Date(timeStart), {addSuffix: true})}</span>
+                        <span className="text-sm">Rendered: {framesRendered} frames</span>
                         <span className="text-sm">Current frame: {currentFrame ?? '-'}</span>
                     </div>
 

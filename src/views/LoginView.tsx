@@ -4,13 +4,10 @@ import {Button} from "@/ui/Button.tsx";
 import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "firebase/auth";
 import {auth} from "@/core/auth/firebase.ts";
 import {useEffect, useState} from "react";
-import {useFetcher} from "@/core/hooks/useFetcher.ts";
 
 export default function LoginView() {
     const [username, setUsername] = useState<string | null>(null);
     const googleProvider = new GoogleAuthProvider();
-
-    const { registerUser } = useFetcher();
 
     useEffect(() => {
         return onAuthStateChanged(auth, login => {
@@ -19,8 +16,7 @@ export default function LoginView() {
     }, [])
 
     const logIn = async () => {
-        const user = await signInWithPopup(auth, googleProvider);
-        await registerUser(user.user.displayName ?? "Unknown user");
+        await signInWithPopup(auth, googleProvider);
     }
 
     const logOut = async () => {

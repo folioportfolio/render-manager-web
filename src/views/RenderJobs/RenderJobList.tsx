@@ -43,21 +43,27 @@ const columnDefinition: TableColumnDefinition[] = [
     {
         header: () => <div>Frames</div>,
         cell: (item) => {
-            return (<div>{item.currentFrame}</div>);
+            return (<div>{item.framesRendered}</div>);
         },
         hideOnMobile: true
     },
     {
         header: "Start Time",
         cell: (item) => {
-            return (<div className="text-xs">{formatDistanceToNow(new Date(item.timeStart), {addSuffix: true})}</div>)
+            return (
+                <div className="text-xs" title={new Date(item.timeStart).toLocaleString()}>
+                    {formatDistanceToNow(new Date(item.timeStart), {addSuffix: true})}
+                </div>)
         },
         hideOnMobile: true
     },
     {
         header: "End Time",
         cell: (item) => {
-            return (<div className="text-xs">{item.timeEnd ? formatDistanceToNow(new Date(item.timeEnd), {addSuffix: true}) : ""}</div>)
+            return (
+                <div className="text-xs" title={item.timeEnd ? new Date(item.timeEnd).toLocaleString() : undefined}>
+                    {item.timeEnd ? formatDistanceToNow(new Date(item.timeEnd), {addSuffix: true}) : ""}
+                </div>)
         },
         hideOnMobile: true
     },

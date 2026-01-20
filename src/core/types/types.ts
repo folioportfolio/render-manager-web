@@ -16,6 +16,7 @@ export interface RenderJob {
 
     currentFrame?: number;
     frames?: JobFrame[];
+    framesRendered?: number;
 }
 
 export interface JobFrame {

@@ -54,6 +54,7 @@ export const useRenderJobsStore = create<RenderJobsState>((set) => ({
                     currentFrame: frame,
                     timeLastFrame: Date.now() / 1000,
                     state: "inProgress",
+                    framesRendered: job.framesRendered ? job.framesRendered + 1 : 1
                 });
             }
 
@@ -68,6 +69,7 @@ export const useRenderJobsStore = create<RenderJobsState>((set) => ({
             if (job) {
                 next.set(jobId, {
                     ...job,
+                    timeEnd: Date.now(),
                     state: stateValue,
                 });
             }

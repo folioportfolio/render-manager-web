@@ -3,7 +3,7 @@ import {Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupConten
     SidebarMenuButton, SidebarMenuItem} from "@/ui/Sidebar.tsx";
 import {useNavigate} from "react-router";
 import { HomeIcon, Computer } from "lucide-react"
-import logo from "@/assets/logo.svg";
+import logo from "@/assets/logo.webp";
 import LoginView from "@/views/LoginView.tsx";
 import ServerManagementView from "@/views/ServerManagementView.tsx";
 
@@ -27,7 +27,10 @@ export default function MainMenu() {
         <>
             <Sidebar>
                 <SidebarHeader>
-                    <img className="my-2 h-10 self-start" src={logo} alt="Render Status Logo" />
+                    <div className="flex flex-row items-center gap-4">
+                        <img className="my-2 h-10 self-start" src={logo} alt="Render Status Logo" />
+                        <span className="text-2xl font-logo">Render Status</span>
+                    </div>
                 </SidebarHeader>
                 <SidebarContent>
                     <SidebarGroup>
